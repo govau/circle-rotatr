@@ -1,0 +1,14 @@
+
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  name = "github.com/jszwedko/go-circleci"
+  version = "0.2.0"
+
+[[constraint]]
+  name = "github.com/cloudfoundry-community/go-uaa"
+  source = "github.com/govau/go-uaa"
+  # version = "0.1.1"
+  branch = "set-password"

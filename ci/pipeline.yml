@@ -1,0 +1,35 @@
+groups: []
+resources:
+- name: src
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/govau/torque
+- name: ops
+  type: git
+  source:
+    branch: torque-conf
+    paths:
+    - torque/*
+    private_key: ((ops-git-deploy-key.private_key))
+    uri: git@github.com:AusDTO/ops.git
+- name: 6am
+  type: time
+  source:
+    start: 6:00 AM
+    stop: 7:00 AM
+    location: Australia/Sydney
+jobs:
+- name: do-it
+  serial: true
+  plan:
+  - do:
+    - get: src
+    - get: ops
+    - get: 6am
+      trigger: true
+    - task: deploy
+      file: src/ci/run.yml
+      params:
+        CIRCLE_TOKEN: ((CIRCLE_TOKEN))
+        ENV_JSON: ((ENV_JSON))
