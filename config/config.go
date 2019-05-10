@@ -12,10 +12,10 @@ type Settings struct {
 	Orgs []CfOrg
 }
 
-// Cf CloudFoundry API settings
+// Cf CloudFoundry instance settings
 type Cf struct {
-	UaaHref string `yaml:"uaa_href"`
-	Suffix  string
+	APIHref string `yaml:"api_href"`
+	ID      string
 }
 
 // CfOrg CloudFoundry Organisation settings

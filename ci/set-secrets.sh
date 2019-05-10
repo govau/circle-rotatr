@@ -45,13 +45,18 @@ EOF
 UAAC_CMD="docker run -it --rm -v ${SCRIPT_DIR}/.uaac.yml:/root/.uaac.yml govau/cf-uaac:4.1.0 uaac "
 UAA_ORIGIN="$(yq -r '.uaa_origin' ${PATH_TO_OPS}/torque/config.yaml)"
 
-UAA_SUFFIXES="$(yq -r '.cfs[].suffix' ${PATH_TO_OPS}/torque/config.yaml)"
+UAA_IDS="$(yq -r '.cfs[].id' ${PATH_TO_OPS}/torque/config.yaml)"
 ENV_JSON="{"
-for UAA_SUFFIX in ${UAA_SUFFIXES}; do
-  echo "Ensuring UAA user exists for $UAA_SUFFIX"
+for UAA_ID in ${UAA_IDS}; do
+  echo "Ensuring UAA user exists for $UAA_ID"
 
-  UAA_HREF="$(yq -r ".cfs[] | select (.suffix == \"${UAA_SUFFIX}\") | .uaa_href" ${PATH_TO_OPS}/torque/config.yaml)"
-  JUMPBOX="${UAA_HREF/https:\/\/uaa.system/bosh-jumpbox}"    
+  API_HREF="$(yq -r ".cfs[] | select (.id == \"${UAA_ID}\") | .api_href" ${PATH_TO_OPS}/torque/config.yaml)"
+  UAA_HREF="$(curl -s "${API_HREF}" | jq -r .links.uaa.href)"
+
+  regex="([a-z]+).cld.gov.au"
+  [[ $API_HREF =~ $regex ]]
+  ENV_NAME="${BASH_REMATCH[1]}"
+  JUMPBOX="bosh-jumpbox.${ENV_NAME}.cld.gov.au"
   
   # Target our uaa
   ${UAAC_CMD} target "${UAA_HREF}"
@@ -83,8 +88,8 @@ for UAA_SUFFIX in ${UAA_SUFFIXES}; do
   if [[ $ENV_JSON != "{" ]]; then
     ENV_JSON="${ENV_JSON},"
   fi
-  ENV_JSON="${ENV_JSON}\"UAA_CLIENT_ID_${UAA_SUFFIX}\":\"${UAA_CLIENT_ID}\""
-  ENV_JSON="${ENV_JSON},\"UAA_CLIENT_SECRET_${UAA_SUFFIX}\":\"${NEW_UAA_CLIENT_SECRET}\""
+  ENV_JSON="${ENV_JSON}\"UAA_CLIENT_ID_${UAA_ID}\":\"${UAA_CLIENT_ID}\""
+  ENV_JSON="${ENV_JSON},\"UAA_CLIENT_SECRET_${UAA_ID}\":\"${NEW_UAA_CLIENT_SECRET}\""
 done
 ENV_JSON="${ENV_JSON}}"
 set_credhub_value ENV_JSON "${ENV_JSON}"
