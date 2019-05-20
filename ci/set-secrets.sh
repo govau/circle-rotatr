@@ -102,3 +102,14 @@ if [ -v CIRCLE_TOKEN ]; then
 else
   assert_credhub_value CIRCLE_TOKEN
 fi
+
+if [ -v DOCKER_HUB_EMAIL ]; then
+  set_credhub_value DOCKER_HUB_EMAIL "${DOCKER_HUB_EMAIL}"
+  set_credhub_value DOCKER_HUB_USERNAME "${DOCKER_HUB_USERNAME}"
+  set_credhub_value DOCKER_HUB_PASSWORD "${DOCKER_HUB_PASSWORD}"
+else
+  assert_credhub_value DOCKER_HUB_EMAIL
+  assert_credhub_value DOCKER_HUB_USERNAME
+  assert_credhub_value DOCKER_HUB_PASSWORD
+fi
+

@@ -19,8 +19,25 @@ resources:
     start: 6:00 AM
     stop: 7:00 AM
     location: Australia/Sydney
+- name: img
+  type: docker-image
+  source:
+    email: ((DOCKER_HUB_EMAIL))
+    username: ((DOCKER_HUB_USERNAME))
+    password: ((DOCKER_HUB_PASSWORD))
+    repository: govau/torque
 jobs:
-- name: do-it
+- name: publish
+  serial: true
+  plan:
+    - do:
+      - get: src
+        trigger: true
+      - put: img
+        params:
+          build: src
+          tag_as_latest: "true"
+- name: run
   serial: true
   plan:
   - do:
