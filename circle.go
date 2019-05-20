@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+  "fmt"
 
 	circleci "github.com/jszwedko/go-circleci"
 )
@@ -41,4 +42,30 @@ func NewCircle(circleToken string) (*Circle, error) {
 		log.Fatalln("Problem with circle token", err)
 	}
 	return circle, nil
+}
+
+// EnsureEnvVarsExist make sure that all env vars are set on the given circle project
+func (c *Circle) EnsureEnvVarsExist(account string, repoName string, desiredEnvVars map[string]string) error {
+  envVars, err := c.Client.ListEnvVars(account, repoName)
+	if err != nil {
+		return err
+  }
+
+  for key, value := range desiredEnvVars {
+    found := false
+    for _, envVar := range envVars {
+      if envVar.Name == key {
+        found = true
+        break
+      }
+    }
+    if !found {
+      _, err = c.Client.AddEnvVar(account, repoName, key, value)
+      if err != nil {
+        return fmt.Errorf("Problem adding environment variable: %v", err)
+      }
+    }
+  }
+	
+	return nil
 }

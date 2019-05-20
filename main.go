@@ -31,6 +31,7 @@ func getEnvVar(key string) string {
 	return value
 }
 
+// Query a cf api endpoint for its uaa href
 func apiToUaaHref(apiHref string) (string, error) {
 	if *verbose {
 		log.Printf("Getting uaa href from %s", apiHref)
@@ -142,17 +143,21 @@ func main() {
 		for _, cfSpace := range cfOrg.Spaces {
 
 			space := Space{
-				Name:  cfSpace.Name,
-				Org:   cfOrg.Name,
-        Repos: cfSpace.Repos,
-        UaaOrigin: settings.UaaOrigin,
+				Name:      cfSpace.Name,
+				Org:       cfOrg.Name,
+				Repos:     cfSpace.Repos,
+				UaaOrigin: settings.UaaOrigin,
 			}
 
 			for id, api := range uaaAPIs {
+
+				if err := space.EnsureCircleEnvVarsSet(circle); err != nil {
+					log.Fatalf("Problem ensuring circle env vars set: %v", err)
+				}
+
 				envVarName := fmt.Sprintf("CF_PASSWORD_%s", id)
-				err := space.Rotate(api, circle, envVarName)
-				if err != nil {
-					log.Fatalf("Problem rotating %s: %v",id,err)
+				if err := space.Rotate(api, circle, envVarName); err != nil {
+					log.Fatalf("Problem rotating %s: %v", id, err)
 				}
 			}
 		}

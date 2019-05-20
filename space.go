@@ -12,10 +12,10 @@ import (
 
 // Space CloudFoundry space mapped to circleci projects
 type Space struct {
-	Name  string
-	Org   string
-  Repos []string
-  UaaOrigin string
+	Name      string
+	Org       string
+	Repos     []string
+	UaaOrigin string
 }
 
 func generateNewPassword() string {
@@ -34,6 +34,34 @@ func repoToAccountAndProject(s string) (string, string, error) {
 
 func (s *Space) cfUserName() string {
 	return fmt.Sprintf("ci-%s-%s", s.Org, s.Name)
+}
+
+// EnsureCircleEnvVarsSet ensure the circle project has all environment variable
+// a project needs to deploy to cf
+func (s *Space) EnsureCircleEnvVarsSet(circle *Circle) error {
+
+	desiredEnvVars := map[string]string{
+		"CF_ORG":      s.Org,
+		"CF_SPACE":    s.Name,
+		"CF_USERNAME": s.cfUserName(),
+	}
+	for _, cf := range settings.Cfs {
+		desiredEnvVars[fmt.Sprintf("CF_API_%s", cf.ID)] = cf.APIHref
+	}
+
+	for _, repo := range s.Repos {
+		account, project, err := repoToAccountAndProject(repo)
+		if err != nil {
+			return err
+		}
+
+		err = circle.EnsureEnvVarsExist(account, project, desiredEnvVars)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 //Rotate the password of the ci user in this space, and write it to each
@@ -73,6 +101,6 @@ func (s *Space) Rotate(uaaAPI *uaa.API, circle *Circle, envVarName string) error
 		}
 	}
 
-	log.Printf("Successfully rotated %s", username)
+	log.Printf("Successfully rotated %s - %s", uaaAPI.TargetURL, username)
 	return nil
 }
