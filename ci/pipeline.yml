@@ -41,11 +41,14 @@ jobs:
   serial: true
   plan:
   - do:
+    - get: img
+      passed:
+        - publish
     - get: src
     - get: ops
     - get: 6am
       trigger: true
-    - task: deploy
+    - task: run
       file: src/ci/run.yml
       params:
         CIRCLE_TOKEN: ((CIRCLE_TOKEN))
