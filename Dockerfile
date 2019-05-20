@@ -9,7 +9,9 @@ COPY . /go/src/github.com/govau/torque
 # If we don't disable CGO, the binary won't work. Unsure why?
 WORKDIR /go/src/github.com/govau/torque
 
-RUN dep ensure && CGO_ENABLED=0 go install
+RUN dep ensure && \
+  go test ./... && \
+  CGO_ENABLED=0 go install
 
 FROM alpine:3.9
 

@@ -10,13 +10,12 @@ import (
 	uaa "github.com/cloudfoundry-community/go-uaa"
 )
 
-const uaaOrigin = "uaa"
-
 // Space CloudFoundry space mapped to circleci projects
 type Space struct {
 	Name  string
 	Org   string
-	Repos []string
+  Repos []string
+  UaaOrigin string
 }
 
 func generateNewPassword() string {
@@ -43,7 +42,7 @@ func (s *Space) Rotate(uaaAPI *uaa.API, circle *Circle, envVarName string) error
 	username := s.cfUserName()
 	attributes := ""
 
-	user, err := uaaAPI.GetUserByUsername(username, uaaOrigin, attributes)
+	user, err := uaaAPI.GetUserByUsername(username, s.UaaOrigin, attributes)
 	if err != nil {
 		log.Printf("Error getting user %s\n", username)
 		return err

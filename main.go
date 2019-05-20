@@ -31,15 +31,6 @@ func getEnvVar(key string) string {
 	return value
 }
 
-// CfAPIResponse is the expected response from querying a CloudFoundry API endpoint
-// type CfAPIResponse struct {
-// 	Links Uaa Uaa
-// }
-
-// type Uaa struct {
-// 	href string
-// }
-
 func apiToUaaHref(apiHref string) (string, error) {
 	if *verbose {
 		log.Printf("Getting uaa href from %s", apiHref)
@@ -133,8 +124,8 @@ func main() {
 
 	log.Println("started")
 
-	if err := config.Load(*configFile, settings); err != nil {
-		log.Fatalln("Problem loading config", err)
+	if err := config.LoadFile(*configFile, settings); err != nil {
+		log.Fatalf("Problem loading config: %s\n", err)
 	}
 
 	log.Printf("Using config: %+v", settings)
@@ -153,14 +144,15 @@ func main() {
 			space := Space{
 				Name:  cfSpace.Name,
 				Org:   cfOrg.Name,
-				Repos: cfSpace.Repos,
+        Repos: cfSpace.Repos,
+        UaaOrigin: settings.UaaOrigin,
 			}
 
-			for suffix, api := range uaaAPIs {
-				envName := fmt.Sprintf("CF_PASSWORD_%s", suffix)
-				err := space.Rotate(api, circle, envName)
+			for id, api := range uaaAPIs {
+				envVarName := fmt.Sprintf("CF_PASSWORD_%s", id)
+				err := space.Rotate(api, circle, envVarName)
 				if err != nil {
-					log.Fatalln(err)
+					log.Fatalf("Problem rotating %s: %v",id,err)
 				}
 			}
 		}

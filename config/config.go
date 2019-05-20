@@ -1,14 +1,18 @@
 package config
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 // Settings The application settings
 type Settings struct {
-	Cfs  []Cf
+	UaaOrigin string `yaml:"uaa_origin"`
+  Cfs  []Cf
 	Orgs []CfOrg
 }
 
@@ -28,20 +32,51 @@ type CfOrg struct {
 type CfSpace struct {
 	Name  string
 	Repos []string
+	SkipIDs []string `yaml:"skip_ids"`
 }
 
-// Load Populate the given Settings from the given file
-func Load(filename string, settings *Settings) error {
-	content, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return err
+func validate(s *Settings) error {
+	for _, cfOrg := range s.Orgs {
+		for _, cfSpace := range cfOrg.Spaces {
+			// Check SkipIDs exist in Cfs
+			for _, skipID := range cfSpace.SkipIDs {
+				found := false
+				for _, cf := range s.Cfs {
+					if skipID == cf.ID {
+						found = true
+						break
+					}
+				}
+				if !found {
+					return fmt.Errorf("Config: skipped ID not found in CFs: %s", skipID)
+				}
+			}
+		}
 	}
-
-	err = yaml.Unmarshal(content, settings)
-	if err != nil {
-		return err
-	}
-
-	//todo add some validation?
 	return nil
+}
+
+// Load settings from the given io.Reader
+func Load(reader io.Reader, settings *Settings) error {
+	bytes, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.UnmarshalStrict(bytes, settings)
+	if err != nil {
+		return err
+	}
+
+	return validate(settings)
+}
+
+// LoadFile load settings from the given file
+func LoadFile(file string, settings *Settings) error {
+	handle, err := os.Open(file)
+	if err != nil {
+		return err
+	}
+	defer handle.Close()
+	return Load(handle, settings)
 }
