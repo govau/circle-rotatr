@@ -10,7 +10,7 @@ Given this config.yaml:
 
 ```
 cfs:
-  - uaa_href: uaa.mycloudfoundry.com
+  - api_href: api.mycloudfoundry.com
     suffix: STAGING
 orgs:
   - name: test-org
@@ -35,7 +35,7 @@ orgs:
 
 1. The app ensures the following environment variables are set in circleci for each repo:
 
-- CF_API_STAGING=https://api.system.b.cld.gov.au
+- CF_API_STAGING=https://api.mycloudfoundry.com
 - CF_ORG=test-org
 - CF_SPACE=test-space
 - CF_USERNAME=ci-test-org-test-space
@@ -49,7 +49,9 @@ orgs:
 ```bash
 uaac client add torque \
   --name torque \
-  --secret "${CLIENT_SECRET}" \
+  --secret "new-client-secret-password" \
   --authorized_grant_types client_credentials,refresh_token \
-  --authorities uaa.admin
+  --authorities uaa.admin,password.write
 ```
+
+(In our CI, this client is created in [set-secrets.sh](ci/set-secrets.sh) and the credentials are added to CI credhub)
