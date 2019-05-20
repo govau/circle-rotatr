@@ -41,9 +41,9 @@ func (s *Space) cfUserName() string {
 func (s *Space) EnsureCircleEnvVarsSet(circle *Circle) error {
 
 	desiredEnvVars := map[string]string{
-		"CF_ORG":      s.Org,
-		"CF_SPACE":    s.Name,
-		"CF_USERNAME": s.cfUserName(),
+		"CF_ORG":   s.Org,
+		"CF_SPACE": s.Name,
+		"CF_USER":  s.cfUserName(),
 	}
 	for _, cf := range settings.Cfs {
 		desiredEnvVars[fmt.Sprintf("CF_API_%s", cf.ID)] = cf.APIHref

@@ -38,7 +38,7 @@ orgs:
 - CF_API_STAGING=https://api.mycloudfoundry.com
 - CF_ORG=test-org
 - CF_SPACE=test-space
-- CF_USERNAME=ci-test-org-test-space
+- CF_USER=ci-test-org-test-space
 
 1. The app waits until there are no builds in progress before rotating the password.
 
