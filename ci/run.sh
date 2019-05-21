@@ -7,7 +7,7 @@ set -o pipefail
 : "${ENV_JSON:?Need to set ENV_JSON}"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-echo ENV_JSON=$ENV_JSON
+
 KEYS="$(echo $ENV_JSON | jq -r keys[])"
 for KEY in ${KEYS}; do
   VALUE="$(echo $ENV_JSON | jq -r .$KEY)"
