@@ -141,7 +141,7 @@ func main() {
 
 	for _, cfOrg := range settings.Orgs {
 		for _, cfSpace := range cfOrg.Spaces {
-
+			log.Printf("%s %s", cfOrg.Name, cfSpace.Name)
 			space := Space{
 				Name:      cfSpace.Name,
 				Org:       cfOrg.Name,
@@ -150,6 +150,17 @@ func main() {
 			}
 
 			for id, api := range uaaAPIs {
+				skip := false
+				for _, skipID := range cfSpace.SkipIDs {
+					if id == skipID {
+						skip = true
+						break
+					}
+				}
+				if skip {
+					log.Printf("Skipping %s", id)
+					continue
+				}
 
 				if err := space.EnsureCircleEnvVarsSet(circle); err != nil {
 					log.Fatalf("Problem ensuring circle env vars set: %v", err)
