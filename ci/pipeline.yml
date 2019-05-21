@@ -26,6 +26,15 @@ resources:
     username: ((DOCKER_HUB_USERNAME))
     password: ((DOCKER_HUB_PASSWORD))
     repository: govau/torque
+- name: slack
+  type: slack-notification
+  source:
+    url: ((slack-webhook-url))
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
 jobs:
 - name: publish
   serial: true
@@ -37,6 +46,12 @@ jobs:
         params:
           build: src
           tag_as_latest: "true"
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: $BUILD_PIPELINE_NAME $BUILD_JOB_NAME FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 - name: run
   serial: true
   plan:
@@ -53,3 +68,10 @@ jobs:
       params:
         CIRCLE_TOKEN: ((CIRCLE_TOKEN))
         ENV_JSON: ((ENV_JSON))
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: $BUILD_PIPELINE_NAME $BUILD_JOB_NAME FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        
