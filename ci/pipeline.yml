@@ -8,7 +8,7 @@ resources:
 - name: ops
   type: git
   source:
-    branch: torque-conf
+    branch: master
     paths:
     - torque/*
     private_key: ((ops-git-deploy-key.private_key))
