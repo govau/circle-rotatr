@@ -68,11 +68,11 @@ Torque runs every 24 hours, however you can run it manually.
 
 There should now be the expected env vars at https://circleci.com/gh/govau/project-name/edit#env-vars
 
-## Future plans
+## TODO
 
-1. The app ensures there is a user in CloudFoundry UAA called `ci-test-org-test-space` with the `SpaceDeveloper` role on `test-space` in cf instances.
+[ ] The app should ensure there is a user in CloudFoundry UAA called `ci-test-org-test-space` with the `SpaceDeveloper` role on `test-space` in cf instances.
 
-1. The app waits until there are no builds in progress before rotating the password.
+[ ] The app should wait until there are no builds in progress before rotating the password to ensure no impact to teams. It is probably not possible to 100% guarantee this, but even a simple check would be better than nothing.
 
 ## Configuration
 
