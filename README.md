@@ -36,6 +36,38 @@ orgs:
 
 - CF_PASSWORD_STAGING=the-current-password
 
+## Onboarding a new team / space / repo
+
+### 1. Ensure there is a ci user in this space cloud.gov.au
+
+Run the following `cf` commands in prod and/or staging as required for this team.
+
+```bash
+CF_ORG=foo
+CF_SPACE=bar
+CF_USER_TO_CREATE=ci-${CF_ORG}-${CF_SPACE}
+
+# create the user with a random password, torque will later reset it and save it to circle
+cf create-user ${CF_USER_TO_CREATE} "$(openssl rand -hex 32)"
+
+# Give the ci user access to deploy to the space
+cf set-space-role ${CF_USER_TO_CREATE} ${CF_ORG} ${CF_SPACE} SpaceDeveloper
+```
+
+### 2. Ensure the project is being built by CircleCI. 
+
+Go to https://circleci.com/add-projects/gh/govau (for govau), and click "Set Up Project" next to your repo if it is showing. If it is already setup, it will say either "Follow Project" or "Unfollow Project".
+
+### 3. Add the repo into the torque configuration
+
+The cloud.gov.au torque configuration is in the private ops repo at https://github.com/AusDTO/ops/blob/master/torque/config.yaml.
+
+### 4. Wait for torque to run and confirm the project has the env vars set
+
+Torque runs every 24 hours, however you can run it manually.
+
+There should now be the expected env vars at https://circleci.com/gh/govau/project-name/edit#env-vars
+
 ## Future plans
 
 1. The app ensures there is a user in CloudFoundry UAA called `ci-test-org-test-space` with the `SpaceDeveloper` role on `test-space` in cf instances.
