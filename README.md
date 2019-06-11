@@ -78,6 +78,10 @@ There should now be the expected env vars at https://circleci.com/gh/govau/proje
 
 ### Create UAA Client
 
+This client is created in [set-secrets.sh](ci/set-secrets.sh), and the credentials are added to CI credhub.
+
+If you need to create a token manually:
+
 ```bash
 uaac client add torque \
   --name torque \
@@ -86,4 +90,17 @@ uaac client add torque \
   --authorities uaa.admin,password.write
 ```
 
-(In our CI, this client is created in [set-secrets.sh](ci/set-secrets.sh) and the credentials are added to CI credhub)
+### Create a CircleCI Token
+
+1. Login to github as an appropriate machine user with admin access to the required github orgs.
+2. Go to circleci.com/account/api. Sign in with CircleCI if necessary
+3. Create an API token.
+4. Save the token as CIRCLE_TOKEN in `.envrc`.
+
+Running [set-secrets.sh](ci/set-secrets.sh) will now store the circle token in CI credhub.
+
+### Create secrets for docker hub
+
+The CI pipeline builds torque and publishes a docker image on [docker hub](https://hub.docker.com/r/govau/torque).
+
+TODO
