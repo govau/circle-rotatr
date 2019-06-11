@@ -54,19 +54,15 @@ cf create-user ${CF_USER_TO_CREATE} "$(openssl rand -hex 32)"
 cf set-space-role ${CF_USER_TO_CREATE} ${CF_ORG} ${CF_SPACE} SpaceDeveloper
 ```
 
-### 2. Ensure the project is being built by CircleCI. 
-
-Go to https://circleci.com/add-projects/gh/govau (for govau), and click "Set Up Project" next to your repo if it is showing. If it is already setup, it will say either "Follow Project" or "Unfollow Project".
-
-### 3. Add the repo into the torque configuration
+### 2. Add the repo into the torque configuration
 
 The cloud.gov.au torque configuration is in the private ops repo at https://github.com/AusDTO/ops/blob/master/torque/config.yaml.
 
-### 4. Wait for torque to run and confirm the project has the env vars set
+### 3. Wait for torque to run and confirm the project has the env vars set
 
 Torque runs every 24 hours, however you can run it manually.
 
-There should now be the expected env vars at https://circleci.com/gh/govau/project-name/edit#env-vars
+There should now be the expected env vars at https://circleci.com/gh/govau/your-repo-name-here/edit#env-vars
 
 ## TODO
 
