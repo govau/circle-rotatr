@@ -25,4 +25,4 @@ RUN apk add --update \
 
 COPY --from=builder /go/bin/torque /usr/bin/torque
 
-ENTRYPOINT [ "/usr/bin/torque"]
+CMD [ "/usr/bin/torque"]
