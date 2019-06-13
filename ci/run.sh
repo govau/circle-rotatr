@@ -15,5 +15,5 @@ for KEY in ${KEYS}; do
 done
 
 CIRCLE_TOKEN="${CIRCLE_TOKEN}" \
-torque \
+torque -verbose \
   -config.file "${SCRIPT_DIR}/../../ops/torque/config.yaml"
