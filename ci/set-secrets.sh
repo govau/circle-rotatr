@@ -15,7 +15,7 @@ set_credhub_value() {
   KEY="$1"
   VALUE="$2"
   https_proxy=socks5://localhost:8112 \
-  credhub set -n "/concourse/apps/$PIPELINE/$KEY" -t value -v "${VALUE}"
+  credhub set -n "/concourse/main/$PIPELINE/$KEY" -t value -v "${VALUE}"
 }
 
 assert_credhub_value() {
@@ -42,7 +42,7 @@ cat << EOF > ${SCRIPT_DIR}/.uaac.yml
 notused: {}
 EOF
 
-UAAC_CMD="docker run -it --rm -v ${SCRIPT_DIR}/.uaac.yml:/root/.uaac.yml govau/cf-uaac:4.1.0 uaac "
+UAAC_CMD="docker run -it --rm -v ${SCRIPT_DIR}/.uaac.yml:/root/.uaac.yml govau/cf-uaac:4.1.0 "
 UAA_ORIGIN="$(yq -r '.uaa_origin' ${PATH_TO_OPS}/torque/config.yaml)"
 
 UAA_IDS="$(yq -r '.cfs[].id' ${PATH_TO_OPS}/torque/config.yaml)"

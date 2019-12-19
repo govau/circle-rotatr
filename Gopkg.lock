@@ -3,14 +3,14 @@
 
 [[projects]]
   branch = "set-password"
-  digest = "1:05b11ac9051c30757c094122163f2c9db343b5345386cde9ec2f832a99e8f6ca"
+  digest = "1:237bd1406a1812c2bcdb205770ada8c13635fcb29618c4a89278def03f567a6f"
   name = "github.com/cloudfoundry-community/go-uaa"
   packages = [
     ".",
     "passwordcredentials",
   ]
   pruneopts = "UT"
-  revision = "8691d3345bb6d8ef7820b76436871cbde0eeb26d"
+  revision = "56ccec337b30fe5c2f996b8771dcefc8baddc641"
   source = "github.com/govau/go-uaa"
 
 [[projects]]
@@ -28,6 +28,14 @@
   pruneopts = "UT"
   revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
   version = "v1.3.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:921840c91853ba44d8246606291d5a7df5cc7c91bea77de9a2cb28d36f24c2ac"
+  name = "github.com/govau/torque"
+  packages = ["config"]
+  pruneopts = "UT"
+  revision = "28a7f6612e108667393045ef306e656114b00390"
 
 [[projects]]
   digest = "1:20c9a48bf528c74416f1f66bef064e287dc3e181469552f7165ff5c470438a0f"
@@ -121,6 +129,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/cloudfoundry-community/go-uaa",
+    "github.com/govau/torque/config",
     "github.com/jszwedko/go-circleci",
     "gopkg.in/yaml.v2",
   ]
