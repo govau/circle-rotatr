@@ -30,14 +30,6 @@
   version = "v1.3.1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:921840c91853ba44d8246606291d5a7df5cc7c91bea77de9a2cb28d36f24c2ac"
-  name = "github.com/govau/torque"
-  packages = ["config"]
-  pruneopts = "UT"
-  revision = "28a7f6612e108667393045ef306e656114b00390"
-
-[[projects]]
   digest = "1:20c9a48bf528c74416f1f66bef064e287dc3e181469552f7165ff5c470438a0f"
   name = "github.com/jszwedko/go-circleci"
   packages = ["."]
